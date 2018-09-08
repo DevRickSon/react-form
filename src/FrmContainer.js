@@ -2,8 +2,16 @@ import React, { Component, Fragment } from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as frmActions from './store/modules/frm';
+import {withRouter} from 'react-router-dom';
 
 class FrmContainer extends Component {
+	static defaultProps = {
+		passManufact: '',
+		passModel: '',
+		passYear: '',
+		passGrade: ''
+	};
+
 	handleChange = e => {
 		const {FrmActions} = this.props;
 		const {target} = e;
@@ -14,7 +22,10 @@ class FrmContainer extends Component {
 	}
 
 	componentDidMount(){
-		const {FrmActions, passManufact, passModel, passYear, passGrade} = this.props;
+		const {FrmActions, passManufact, passModel, passYear, passGrade, match, location, history} = this.props;
+		console.log(match);
+		console.log(location);
+		console.log(history);
 		FrmActions.getManufact();
 		this.initStatus(passManufact, passModel, passYear, passGrade);
 	}
@@ -26,34 +37,70 @@ class FrmContainer extends Component {
 	}
 
 	componentDidUpdate(prevProps, prevState){
-		if(prevProps.manufact !== this.props.manufact){
-			const {FrmActions} = this.props;
+		if(prevProps.passManufact !== this.props.passManufact){
+			console.log('manufact');
+			const {FrmActions, passManufact} = this.props;
 
 			if(this.props.isInit) FrmActions.initModel();
 
-			if(this.props.manufact !== ''){
+			if(passManufact !== ''){
 				FrmActions.getModel();
 			}
 		}
 
-		if(prevProps.model !== this.props.model){
-			const {FrmActions} = this.props;
+		if(prevProps.manufact !== this.props.manufact){
+			const {FrmActions, manufact, history} = this.props;
+			if(this.props.isInit) history.push(`/${manufact}`); else FrmActions.getModel();
+		}
+
+		if(prevProps.passModel !== this.props.passModel){
+			console.log('model');
+			const {FrmActions, passModel} = this.props;
 
 			if(this.props.isInit) FrmActions.initYear();
 
-			if(this.props.model !== ''){
+			if(passModel !== ''){
 				FrmActions.getYear();
 			}
 		}
 
-		if(prevProps.year !== this.props.year){
-			const {FrmActions} = this.props;
+		if(prevProps.model !== this.props.model){
+			const {FrmActions, manufact, model, history} = this.props;
+			if(this.props.isInit) history.push(`/${manufact}/${model}#asdf`); else FrmActions.getYear();
+		}
+
+		if(prevProps.passYear !== this.props.passYear){
+			console.log('year');
+			const {FrmActions, passYear} = this.props;
 
 			if(this.props.isInit) FrmActions.initGrade();
 
-			if(this.props.year !== ''){
+			if(passYear !== ''){
 				FrmActions.getGrade();
+			}else{
+				FrmActions.initYear();
 			}
+		}
+
+		if(prevProps.year !== this.props.year){
+			const {FrmActions, manufact, model, year, history} = this.props;
+			if(this.props.isInit) history.push(`/${manufact}/${model}/${year}`); else FrmActions.getGrade();
+		}
+
+		if(prevProps.passGrade !== this.props.passGrade){
+			console.log('grade');
+			const {FrmActions, passGrade} = this.props;
+			//
+			// if(this.props.isInit) FrmActions.initGrade();
+			//
+			if(passGrade === ''){
+				//FrmActions.initGrade();
+			}
+		}
+
+		if(prevProps.grade !== this.props.grade){
+			const {manufact, model, year, grade, history} = this.props;
+			if(this.props.isInit) history.push(`/${manufact}/${model}/${year}/${grade}`);
 		}
 	}
 
@@ -135,4 +182,4 @@ export default connect(
 	dispatch => ({
 		FrmActions: bindActionCreators(frmActions, dispatch)
 	})
-)(FrmContainer);
+)(withRouter(FrmContainer));
