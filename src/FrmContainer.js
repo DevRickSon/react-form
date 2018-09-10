@@ -19,88 +19,135 @@ class FrmContainer extends Component {
 		const value = (type === 'checkbox') ? target.checked : target.value;
 
 		FrmActions.change({name, value});
+
+		if(name === 'manufact' || name === 'model' || name === 'year' || name === 'grade'){
+			this.addRoute(name, value);
+		}
+	}
+
+	addRoute = (name, value) => {
+		const {history, manufact, model, year} = this.props;
+		const param = value !== '' ? `/${value}` : '';
+
+		let path = '';
+
+		switch(name.toUpperCase()){
+			case 'MANUFACT':
+				path = `/${value}`;
+				break;
+
+			case 'MODEL':
+				path = `/${manufact}${param}`;
+				break;
+			case 'YEAR':
+				path = `/${manufact}/${model}${param}`;
+				break;
+			case 'GRADE':
+				path = `/${manufact}/${model}/${year}${param}`;
+				break;
+			default:
+		}
+
+		history.push(path);
 	}
 
 	componentDidMount(){
-		const {FrmActions, passManufact, passModel, passYear, passGrade, match, location, history} = this.props;
-		console.log(match);
-		console.log(location);
-		console.log(history);
+		const {FrmActions} = this.props;
 		FrmActions.getManufact();
-		this.initStatus(passManufact, passModel, passYear, passGrade);
+
+		// const mock = {
+		// 	manufact: 'm001',
+		// 	model: 'd002',
+		// 	year: '2019',
+		// 	grade: 'g003'
+		// };
+
+		// const setItem = async () => {
+		// 	await this.initStatus('manufact', mock.manufact);
+		// 	await this.initStatus('model', mock.model);
+		// 	await this.initStatus('year', mock.year);
+		// 	await this.initStatus('grade', mock.grade);
+		// }
+		//
+		// setItem();
+
+		// this.initStatus('manufact', mock.manufact);
+		// this.initStatus('model', mock.model);
+		// this.initStatus('year', mock.year);
+		// this.initStatus('grade', mock.grade);
 	}
 
-	initStatus = async (manufact, model, year, grade) => {
+	initStatus = (name, value) => {
 		const {FrmActions} = this.props;
-		await FrmActions.setManufact({manufact, model, year, grade});
-		FrmActions.init();
+		FrmActions.change({name, value});
+		this.addRoute(name, value);
 	}
 
 	componentDidUpdate(prevProps, prevState){
-		if(prevProps.passManufact !== this.props.passManufact){
-			console.log('manufact');
-			const {FrmActions, passManufact} = this.props;
+		const {passManufact, passModel, passYear, passGrade, yearItems, gradeItems} = this.props;
 
-			if(this.props.isInit) FrmActions.initModel();
+		if(prevProps.passManufact !== passManufact){
+			const {FrmActions} = this.props;
 
 			if(passManufact !== ''){
+				FrmActions.change({name: 'manufact', value: passManufact});
 				FrmActions.getModel();
+			}else{
+				FrmActions.change({name: 'manufact', value: ''});
+				FrmActions.change({name: 'modelItems', value: []});
+			}
+			FrmActions.change({name: 'model', value: ''});
+
+			if(yearItems.length){
+				FrmActions.change({name: 'year', value: ''});
+				FrmActions.change({name: 'yearItems', value: []});
+			}
+
+			if(gradeItems.length){
+				FrmActions.change({name: 'grade', value: ''});
+				FrmActions.change({name: 'gradeItems', value: []});
 			}
 		}
 
-		if(prevProps.manufact !== this.props.manufact){
-			const {FrmActions, manufact, history} = this.props;
-			if(this.props.isInit) history.push(`/${manufact}`); else FrmActions.getModel();
-		}
-
-		if(prevProps.passModel !== this.props.passModel){
-			console.log('model');
-			const {FrmActions, passModel} = this.props;
-
-			if(this.props.isInit) FrmActions.initYear();
+		if(prevProps.passModel !== passModel){
+			const {FrmActions} = this.props;
 
 			if(passModel !== ''){
+				FrmActions.change({name: 'model', value: passModel});
 				FrmActions.getYear();
+			}else{
+				FrmActions.change({name: 'model', value: ''});
+				FrmActions.change({name: 'yearItems', value: []});
+			}
+			FrmActions.change({name: 'year', value: ''});
+
+			if(gradeItems.length){
+				FrmActions.change({name: 'grade', value: ''});
+				FrmActions.change({name: 'gradeItems', value: []});
 			}
 		}
 
-		if(prevProps.model !== this.props.model){
-			const {FrmActions, manufact, model, history} = this.props;
-			if(this.props.isInit) history.push(`/${manufact}/${model}#asdf`); else FrmActions.getYear();
-		}
-
-		if(prevProps.passYear !== this.props.passYear){
-			console.log('year');
-			const {FrmActions, passYear} = this.props;
-
-			if(this.props.isInit) FrmActions.initGrade();
+		if(prevProps.passYear !== passYear){
+			const {FrmActions} = this.props;
 
 			if(passYear !== ''){
+				FrmActions.change({name: 'year', value: passYear});
 				FrmActions.getGrade();
 			}else{
-				FrmActions.initYear();
+				FrmActions.change({name: 'year', value: ''});
+				FrmActions.change({name: 'gradeItems', value: []});
 			}
+			FrmActions.change({name: 'grade', value: ''});
 		}
 
-		if(prevProps.year !== this.props.year){
-			const {FrmActions, manufact, model, year, history} = this.props;
-			if(this.props.isInit) history.push(`/${manufact}/${model}/${year}`); else FrmActions.getGrade();
-		}
+		if(prevProps.passGrade !== passGrade){
+			const {FrmActions} = this.props;
 
-		if(prevProps.passGrade !== this.props.passGrade){
-			console.log('grade');
-			const {FrmActions, passGrade} = this.props;
-			//
-			// if(this.props.isInit) FrmActions.initGrade();
-			//
-			if(passGrade === ''){
-				//FrmActions.initGrade();
+			if(passGrade !== ''){
+				FrmActions.change({name: 'grade', value: passGrade});
+			}else{
+				FrmActions.change({name: 'grade', value: ''});
 			}
-		}
-
-		if(prevProps.grade !== this.props.grade){
-			const {manufact, model, year, grade, history} = this.props;
-			if(this.props.isInit) history.push(`/${manufact}/${model}/${year}/${grade}`);
 		}
 	}
 

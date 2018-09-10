@@ -7,15 +7,6 @@ const GET_MODEL = 'frm/GET_MODEL';
 const GET_YEAR = 'frm/GET_YEAR';
 const GET_GRADE = 'frm/GET_GRADE';
 
-const SET_MANUFACT = 'frm/SET_MANUFACT';
-const SET_MODEL = 'frm/SET_MODEL';
-
-const INIT_MODEL = 'frm/INIT_MODEL';
-const INIT_YEAR = 'frm/INIT_YEAR';
-const INIT_GRADE = 'frm/INIT_GRADE';
-
-const INIT = 'frm/INIT';
-
 export const change = createAction(CHANGE);
 
 export const getManufact = createAction(GET_MANUFACT);
@@ -23,29 +14,19 @@ export const getModel = createAction(GET_MODEL);
 export const getYear = createAction(GET_YEAR);
 export const getGrade = createAction(GET_GRADE);
 
-export const setManufact = createAction(SET_MANUFACT);
-export const setModel = createAction(SET_MODEL);
-
-export const initModel = createAction(INIT_MODEL);
-export const initYear = createAction(INIT_YEAR);
-export const initGrade = createAction(INIT_GRADE);
-
-export const init = createAction(INIT);
-
 const initialState = {
-	isInit: false,
 	manufact: '',
 	model: '',
 	year: '',
 	grade: '',
-	opt1: false,
-	opt2: false,
-	opt3: false,
-	acc: '',
 	manufactItems: [],
 	modelItems: [],
 	yearItems: [],
-	gradeItems: []
+	gradeItems: [],
+	opt1: false,
+	opt2: false,
+	opt3: false,
+	acc: ''
 };
 
 export default handleActions({
@@ -160,49 +141,5 @@ export default handleActions({
 			...state,
 			gradeItems: items
 		}
-	},
-
-	[SET_MANUFACT]: (state, action) => {
-		const {manufact, model, year, grade} = action.payload;
-
-		return {
-			...state,
-			manufact: manufact,
-			model: model,
-			year: year,
-			grade: grade
-		}
-	},
-
-	[SET_MODEL]: (state, action) => {
-		const {payload: model} = action;
-
-		return {
-			...state,
-			model: model
-		}
-	},
-
-	[INIT_MODEL]: state => ({
-		...state,
-		model: '',
-		modelItems: []
-	}),
-
-	[INIT_YEAR]: state => ({
-		...state,
-		year: '',
-		yearItems: []
-	}),
-
-	[INIT_GRADE]: state => ({
-		...state,
-		grade: '',
-		gradeItems: []
-	}),
-
-	[INIT]: state => ({
-		...state,
-		isInit: true
-	})
+	}
 }, initialState);
