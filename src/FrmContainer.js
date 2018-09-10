@@ -61,7 +61,7 @@ class FrmContainer extends Component {
 		// 	year: '2019',
 		// 	grade: 'g003'
 		// };
-
+		//
 		// const setItem = async () => {
 		// 	await this.initStatus('manufact', mock.manufact);
 		// 	await this.initStatus('model', mock.model);
@@ -70,11 +70,6 @@ class FrmContainer extends Component {
 		// }
 		//
 		// setItem();
-
-		// this.initStatus('manufact', mock.manufact);
-		// this.initStatus('model', mock.model);
-		// this.initStatus('year', mock.year);
-		// this.initStatus('grade', mock.grade);
 	}
 
 	initStatus = (name, value) => {
